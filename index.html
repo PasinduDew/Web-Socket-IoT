@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+  </head>
+  <body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io.connect("/");
+      socket.on("init_event", function (data) {
+        console.log("Event Triggered:", data.message);
+      });
+
+      socket.on("switch_01", function (data) {
+        console.log("Event Triggered:", data.state);
+      });
+    </script>
+  </body>
+</html>
