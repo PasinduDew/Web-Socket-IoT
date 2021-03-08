@@ -1,41 +1,27 @@
-const app = require("express")();
-const http = require("http").createServer(app);
-const io = require("socket.io")(http, {
-  cors: {
-    origin: "*",
-  },
-});
+const express = require("express");
+const app = express();
+const expressWs = require("express-ws")(app);
 
 const PORT = process.env.PORT || 3000;
 
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
+app.use(function (req, res, next) {
+  console.log("middleware");
+  req.testing = "testing";
+  return next();
 });
 
-// When Client Connects to the WS Server
-io.on("connection", (socket) => {
-  socket.emit("init_event", { message: "A new user has joined!" });
+app.get("/", function (req, res, next) {
+  console.log("get route", req.testing);
+  res.end();
+});
 
-  console.log(">> Client Connected");
-
-  // Client Disconnected
-  socket.on("disconnect", () => {
-    console.log(">> Client Disconnected");
+app.ws("/", function (ws, req) {
+  ws.on("message", function (msg) {
+    console.log(msg);
   });
-
-  // This is an Example Event Trigger --> event_id
-  // socket.on("event_id", (data) => {
-  //   console.log("Event Data: ", data);
-  // });
-
-  // This is an Example Event Emitter
-  // socket.emit("event_id", { message: "A new user has joined!" });
-
-  setInterval(() => {
-    socket.emit("switch_01", { state: true });
-  }, 2000);
+  console.log("socket", req.testing);
 });
 
-http.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`>> Listening on ${PORT}`);
 });
