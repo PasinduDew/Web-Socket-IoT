@@ -11,8 +11,13 @@ app.use(function (req, res, next) {
 });
 
 app.get("/", function (req, res, next) {
+try {
   console.log("get route", req.testing);
-  res.end();
+  
+} catch (error) {
+  console.log(error);
+  
+}  res.end();
 });
 
 app.ws("/", function (ws, req) {
