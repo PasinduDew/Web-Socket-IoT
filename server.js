@@ -52,6 +52,8 @@ app.ws("/", function (ws, req) {
 
     ws.send(msg);
   });
+
+  ws.on('error', console.log);
 });
 
 app.listen(PORT, () => {
