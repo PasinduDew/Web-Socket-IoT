@@ -1,14 +1,38 @@
+var express = require("express");
+var app = express();
+var expressWs = require("express-ws")(app);
 
 const PORT = process.env.PORT || 3000;
 
-var WebSocketServer = require('ws').Server
-  , wss = new WebSocketServer({ port: PORT });
 
-  console.log("Port:", PORT);
+app.use(function (req, res, next) {
+  console.log("middleware");
+  req.testing = "testing";
+  return next();
+});
 
-wss.on('connection', function connection(ws) {
-  ws.on('message', function incoming(message) {
-    console.log(message);
-    ws.send(message);
+app.get("/", function (req, res, next) {
+  console.log("get route", req.testing);
+  res.end();
+});
+
+app.ws("/test-ws", function (ws, req) {
+  ws.on("message", function (msg) {
+    console.log(msg);
+  });
+  console.log("socket", req.testing);
+});
+
+// Echo
+app.ws("/", function (ws, req) {
+  ws.on("message", function (msg) {
+    console.log(msg);
+
+    ws.send(msg);
   });
 });
+
+app.listen(PORT, () => {
+  console.log(`>> Listening on ${PORT}`);
+});
+
