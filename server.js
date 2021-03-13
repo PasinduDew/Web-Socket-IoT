@@ -2,22 +2,19 @@ const express = require("express");
 const app = express();
 const expressWs = require("express-ws")(app);
 const cors = require("cors");
-const admin = require('firebase-admin');
+const admin = require("firebase-admin");
 
 const serviceAccount = require("./service_key/iot-home-automation-2d686-firebase-adminsdk-69x0t-d348c6cd01.json");
 
 const firebase = admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert(serviceAccount),
 });
 
 const db = firebase.firestore();
 
-
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
-
-
 
 /*
 If you would rather have a list of allowed origins, you can use a function instead of a string as the origin value:
@@ -57,22 +54,38 @@ app.ws("/test-ws", function (ws, req) {
   console.log("socket", req.testing);
 });
 
-// Echo
-app.ws("/", function (ws, req) {
+// #######################################################
+//                           Echo
+// #######################################################
+app.ws("/echo", function (ws, req) {
+  ws.on("connection", () => {});
   ws.on("message", function (msg) {
-
-    db.collection("messages").doc("BLaIvTgGTWyLLC0WAPp8").get().then(doc => {
-      ws.send(doc.data().message);
-    }).catch(err => {
-      console.error(err);
-    });
-
     console.log(msg);
-
-    
+    ws.send(msg);
   });
 
-  ws.on('error', console.log);
+  ws.on("error", console.log);
+});
+
+app.ws("/", function (ws, req) {
+  ws.on("connection", () => {
+    console.log(">> Client Connected");
+  });
+  ws.on("message", function (msg) {
+    db.collection("messages")
+      .doc("BLaIvTgGTWyLLC0WAPp8")
+      .get()
+      .then((doc) => {
+        ws.send(doc.data().message);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+
+    console.log(msg);
+  });
+
+  ws.on("error", console.log);
 });
 
 app.listen(PORT, () => {
