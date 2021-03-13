@@ -68,7 +68,7 @@ app.ws("/echo", function (ws, req) {
 });
 
 app.ws("/", function (ws, req) {
-  ws.on("open", () => {
+  ws.on("open", function() {
     console.log(">> Client Connected - Web Socket Opened");
   });
   ws.on("message", function (msg) {
