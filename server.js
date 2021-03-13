@@ -68,8 +68,8 @@ app.ws("/echo", function (ws, req) {
 });
 
 app.ws("/", function (ws, req) {
-  ws.on("connection", () => {
-    console.log(">> Client Connected");
+  ws.on("open", () => {
+    console.log(">> Client Connected - Web Socket Opened");
   });
   ws.on("message", function (msg) {
     db.collection("messages")
