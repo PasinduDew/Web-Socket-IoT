@@ -68,34 +68,34 @@ app.ws("/echo", function (ws, req) {
 });
 
 app.ws("/", function (ws, req) {
-
   console.log("#############################################");
 
-
-  ws.on("open", function() {
-    console.log(">> Client Connected - Web Socket Opened");
-  });
-
+  db.collection("messages")
+    .doc("BLaIvTgGTWyLLC0WAPp8")
+    .onSnapshot((doc) => {
+      console.log("Message: ", doc.data().message);
+      ws.send(doc.data().message);
+    });
 
   ws.on("message", function (msg) {
-    db.collection("messages")
-      .doc("BLaIvTgGTWyLLC0WAPp8")
-      .get()
-      .then((doc) => {
-        ws.send(doc.data().message);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    // db.collection("messages")
+    //   .doc("BLaIvTgGTWyLLC0WAPp8")
+    //   .get()
+    //   .then((doc) => {
+    //     ws.send(doc.data().message);
+    //   })
+    //   .catch((err) => {
+    //     console.error(err);
+    //   });
 
     console.log(msg);
   });
 
-  ws.on("close", function() {
+  ws.on("close", function () {
     console.log("Client Disconnected");
   });
 
-  ws.on("error", function(err) {
+  ws.on("error", function (err) {
     console.log(err);
   });
 });
