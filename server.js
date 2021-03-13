@@ -68,9 +68,15 @@ app.ws("/echo", function (ws, req) {
 });
 
 app.ws("/", function (ws, req) {
+
+  console.log("#############################################");
+
+
   ws.on("open", function() {
     console.log(">> Client Connected - Web Socket Opened");
   });
+
+
   ws.on("message", function (msg) {
     db.collection("messages")
       .doc("BLaIvTgGTWyLLC0WAPp8")
@@ -85,7 +91,13 @@ app.ws("/", function (ws, req) {
     console.log(msg);
   });
 
-  ws.on("error", console.log);
+  ws.on("close", function() {
+    console.log("Client Disconnected");
+  });
+
+  ws.on("error", function(err) {
+    console.log(err);
+  });
 });
 
 app.listen(PORT, () => {
