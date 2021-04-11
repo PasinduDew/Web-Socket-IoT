@@ -90,6 +90,7 @@ app.ws("/", function (ws, req) {
 
     console.log(msg);
   });
+  
 
   ws.on("close", function () {
     console.log("Client Disconnected");
